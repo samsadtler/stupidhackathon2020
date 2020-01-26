@@ -22,20 +22,24 @@ export default function(sensorName, values) {
       };
     }
 
-    componentWillMount() {
+    componentDidMount() {
       const subscription = sensor$.subscribe(values => {
         var newData = this.state.dataValue,
           newPrecentage = this.state.percentageValue;
         if (Object.keys(values).length === 1) {
-          if (Math.abs(values.pressure - this.state.pressure) > 0.0001) {
+          if (Math.abs(values.pressure - this.state.pressure) > 0.001) {
             newData = this.state.dataValue + 1;
             newPrecentage = this.state.percentageValue + 1;
           }
         }
         if (Object.keys(values).length === 4) {
-          if (Math.abs(values.x - this.state.x) > 0.01) {
+          if (
+            Math.abs(values.x - this.state.x) > 0.02 ||
+            Math.abs(values.y - this.state.y) > 0.02 ||
+            Math.abs(values.z - this.state.z) > 0.02
+          ) {
             newData = this.state.dataValue + 1;
-            this.state.percentageValue + newData / 9000;
+            newPrecentage = this.state.percentageValue + newData / 10000;
             console.log(newPrecentage);
           }
         }
@@ -70,7 +74,7 @@ export default function(sensorName, values) {
               strokeCap={'round'}
             />
             <Text style={styles.circle}>{this.state.dataValue}</Text>
-            <Text style={{fontSize: 20, top: '30%'}}>Data</Text>
+            <Text style={{fontSize: 20, top: '30%', zIndex: 30}}>Data</Text>
           </View>
         </View>
       );
